@@ -5,6 +5,9 @@
 
 int main() 
 {
+    int choice;
+    int grade;
+    
 	std::cout << "MAIN MENU\n\n";
     std::cout << "1-Letter grade using if\n";
     std::cout << "2-Letter grade using switch\n";
