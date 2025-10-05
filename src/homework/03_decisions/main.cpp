@@ -5,10 +5,7 @@
 
 int main() 
 {
-    int choice;
-    int grade;
-    
-	std::cout << "MAIN MENU\n\n";
+    std::cout << "MAIN MENU\n\n";
     std::cout << "1-Letter grade using if\n";
     std::cout << "2-Letter grade using switch\n";
     std::cout << "3-Exit\n\n";
@@ -26,9 +23,7 @@ int main()
         if (!(std::cin >> grade)) {
             std::cout << "Invalid input.\n";
             return 0;
-        }
-
-        if (grade < 0 || grade > 100) {
+            if (grade < 0 || grade > 100) {
             std::cout << "Number is out of range.\n";
             return 0;
         }
@@ -47,5 +42,13 @@ int main()
         std::cout << "Invalid option.\n";
     }
 
-	return 0;
-}
+    return 0;
+} 
+      default:
+            cout << "Invalid choice. Try again.\n\n";
+            break;
+        }
+    } while (choice != 3);
+
+    return 0;
+} 
