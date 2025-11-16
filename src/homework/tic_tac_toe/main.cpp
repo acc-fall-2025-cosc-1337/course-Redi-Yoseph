@@ -1,80 +1,65 @@
 #include <iostream>
 #include <string>
 #include "tic_tac_toe.h"
+#include "tic_tac_toe_manager.h"
 
 int main()
 {
-    std::cout << "TicTacToe (HW07 Winner Version)\n\n";
+    TicTacToeManager manager;
+    char choice = 'y';
 
-    char again = 'y';
-
-    while (again == 'y' || again == 'Y')
+    while (choice == 'y' || choice == 'Y')
     {
         TicTacToe game;
+        std::string first_player;
 
-        std::string first;
-        while (true)
+        std::cout << "Enter first player (X or O): ";
+        std::cin >> first_player;
+
+        while (first_player != "X" && first_player != "O")
         {
-            std::cout << "Who goes first? Enter X or O: ";
-            std::cin >> first;
-
-            if (first == "X" || first == "O") break;
-            std::cout << "Please enter exactly X or O.\n";
+            std::cout << "Invalid. Enter X or O: ";
+            std::cin >> first_player;
         }
 
-        try
-        {
-            game.start_game(first);
-        }
-        catch (const std::exception& e)
-        {
-            std::cout << "Error: " << e.what() << "\n";
-            return 1;
-        }
+        game.start_game(first_player);
 
+        // Show empty board at start
+        std::cout << game;
+
+        // Play until game is over
         while (!game.game_over())
         {
-            game.display_board();
-            std::cout << "\n Current player: " << game.get_player() << "\n";
-
-            int pos = 0;
-            std::cout << "Enter position (1-9): ";
-
-            if (!(std::cin >> pos))
-            {
-                std::cin.clear();
-                std::cin.ignore(10000, '\n');
-                std::cout << "Invalid input. Please enter a number 1-9.\n";
-                continue;
-            }
-
-            try
-            {
-                game.mark_board(pos);
-            }
-            catch (const std::exception& e)
-            {
-                std::cout << "Error: " << e.what() << "\n";
-            }
-
-            std::cout << "\n";
+            // Read move (via overloaded >>), then display board
+            std::cin >> game;
+            std::cout << game;  // ✅ board displayed after each mark
         }
 
-        std::cout << "Final board:\n";
-        game.display_board();
-
         std::string winner = game.get_winner();
+
         if (winner == "C")
         {
-            std::cout << "\n Game over! It's a tie.\n";
+            std::cout << "Game over! It's a tie.\n";
         }
         else
         {
-            std::cout << "\n Game over! The winner is " << winner << ".\n";
+            std::cout << "Game over! Winner: " << winner << "\n";
         }
 
-        std::cout << "\n Play again? (y/n): ";
-        std::cin >> again;
+        // Save game in manager and display totals
+        manager.save_game(game);
+
+        int x = 0;
+        int o = 0;
+        int t = 0;
+        manager.get_winner_total(o, x, t);
+
+        std::cout << "Scoreboard -> X wins: " << x
+                  << "  O wins: " << o
+                  << "  Ties: "   << t << "\n\n";
+
+        std::cout << "Play again? (y/n): ";
+        std::cin >> choice;
         std::cout << "\n";
     }
 

@@ -1,0 +1,1 @@
+/usr/bin/c++ -rdynamic CMakeFiles/hw_03_exe.dir/main.o CMakeFiles/hw_03_exe.dir/decisions.o -o hw_03_exe 
