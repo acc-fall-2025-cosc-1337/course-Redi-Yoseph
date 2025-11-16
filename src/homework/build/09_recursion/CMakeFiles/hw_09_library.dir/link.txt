@@ -1,0 +1,2 @@
+/usr/bin/ar qc libhw_09_library.a CMakeFiles/hw_09_library.dir/recursive.o
+/usr/bin/ranlib libhw_09_library.a

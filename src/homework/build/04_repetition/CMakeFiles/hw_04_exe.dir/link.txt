@@ -1,0 +1,1 @@
+/usr/bin/c++ -rdynamic CMakeFiles/hw_04_exe.dir/main.o CMakeFiles/hw_04_exe.dir/repetition.o -o hw_04_exe 

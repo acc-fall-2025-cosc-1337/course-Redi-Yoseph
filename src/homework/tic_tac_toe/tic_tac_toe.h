@@ -1,41 +1,38 @@
-#pragma once
+#ifndef TIC_TAC_TOE_H
+#define TIC_TAC_TOE_H
 
+#include <iostream>
 #include <string>
 #include <vector>
 
 class TicTacToe
 {
 public:
-    // Now: checks for row/column/diagonal win OR tie.
+    TicTacToe();
+
+    void start_game(std::string first_player);
+    void mark_board(int position);
     bool game_over();
 
-    // Start game with first_player "X" or "O"
-    void start_game(const std::string& first_player);
+    std::string get_winner() const { return winner; }
+    std::string get_player() const { return player; }
 
-    // Mark position 1–9, then switch player.
-    void mark_board(int position);
-
-    // Current player to move
-    std::string get_player() const;
-
-    // Print 3x3 board
-    void display_board() const;
-
-    // "X", "O", or "C" (for tie)
-    std::string get_winner() const;
-
-private:
-    void set_next_player();
-    bool check_board_full() const;
-    void clear_board();
-
-    bool check_column_win() const;
-    bool check_row_win() const;
-    bool check_diagonal_win() const;
-    void set_winner();
+    // Stream operators (REQUIRED by assignment)
+    friend std::ostream& operator<<(std::ostream& out, const TicTacToe& game);
+    friend std::istream& operator>>(std::istream& in, TicTacToe& game);
 
 private:
     std::string player;
-    std::vector<std::string> pegs = std::vector<std::string>(9, " ");
-    std::string winner{" "}; // "X", "O", or "C"
+    std::string winner;
+    std::vector<std::string> pegs{9, " "};   // 3x3 board, positions 1-9
+
+    void clear_board();
+    void set_next_player();
+    bool check_column_win();
+    bool check_row_win();
+    bool check_diagonal_win();
+    bool check_board_full();
+    void set_winner(const std::string& winr);
 };
+
+#endif
