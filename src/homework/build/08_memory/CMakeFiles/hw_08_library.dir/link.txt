@@ -1,0 +1,2 @@
+/usr/bin/ar qc libhw_08_library.a CMakeFiles/hw_08_library.dir/memory.o
+/usr/bin/ranlib libhw_08_library.a
