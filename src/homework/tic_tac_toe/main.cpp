@@ -1,68 +1,54 @@
 #include <iostream>
-#include <string>
-#include "tic_tac_toe.h"
+#include <memory>
+#include "tic_tac_toe_3.h"
+#include "tic_tac_toe_4.h"
 #include "tic_tac_toe_manager.h"
 
 int main()
 {
     TicTacToeManager manager;
-    char choice = 'y';
+    std::unique_ptr<TicTacToe> game;
 
-    while (choice == 'y' || choice == 'Y')
+    char again = 'y';
+
+    while (again == 'y' || again == 'Y')
     {
-        TicTacToe game;
-        std::string first_player;
+        char board_choice;
+        std::cout << "Play TicTacToe 3 or 4 (enter 3 or 4): ";
+        std::cin >> board_choice;
 
-        std::cout << "Enter first player (X or O): ";
-        std::cin >> first_player;
-
-        while (first_player != "X" && first_player != "O")
+        if (board_choice == '3')
         {
-            std::cout << "Invalid. Enter X or O: ";
-            std::cin >> first_player;
-        }
-
-        game.start_game(first_player);
-
-        // Show empty board at start
-        std::cout << game;
-
-        // Play until game is over
-        while (!game.game_over())
-        {
-            // Read move (via overloaded >>), then display board
-            std::cin >> game;
-            std::cout << game;  // ✅ board displayed after each mark
-        }
-
-        std::string winner = game.get_winner();
-
-        if (winner == "C")
-        {
-            std::cout << "Game over! It's a tie.\n";
+            game = std::make_unique<TicTacToe3>();
         }
         else
         {
-            std::cout << "Game over! Winner: " << winner << "\n";
+            game = std::make_unique<TicTacToe4>();
         }
 
-        // Save game in manager and display totals
+        std::string first_player;
+        std::cout << "First player (X or O): ";
+        std::cin >> first_player;
+
+        game->start_game(first_player);
+
+        while (!game->game_over())
+        {
+            std::cout << *game << "\n";
+            std::cin >> *game;
+        }
+
+        std::cout << *game << "\n";
+        std::cout << "Winner: " << game->get_winner() << "\n";
+
         manager.save_game(game);
 
-        int x = 0;
-        int o = 0;
-        int t = 0;
-        manager.get_winner_total(o, x, t);
-
-        std::cout << "Scoreboard -> X wins: " << x
-                  << "  O wins: " << o
-                  << "  Ties: "   << t << "\n\n";
-
         std::cout << "Play again? (y/n): ";
-        std::cin >> choice;
-        std::cout << "\n";
+        std::cin >> again;
     }
 
-    std::cout << "Thanks for playing!\n";
+    std::cout << "\nGame history and totals:\n";
+    std::cout << manager << "\n";
+
     return 0;
 }
