@@ -1,76 +1,193 @@
-#define CATCH_CONFIG_MAIN
 #include "catch.hpp"
+#include <memory>
+#include "tic_tac_toe_3.h"
+#include "tic_tac_toe_4.h"
 
-#include "tic_tac_toe.h"
-#include "tic_tac_toe_manager.h"
+// 
+//   TICTACTOE 3 TESTS
+// 
 
-TEST_CASE("TicTacToe winner must be X, O, or C")
+TEST_CASE("Test win by first column 3", "[TicTacToe3]")
 {
-    TicTacToe game;
-    game.start_game("X");
+    std::unique_ptr<TicTacToe> board = std::make_unique<TicTacToe3>();
+    board->start_game("X");
 
-    // X wins across top row: positions 1,2,3
-    game.mark_board(1); // X
-    game.mark_board(4); // O
-    game.mark_board(2); // X
-    game.mark_board(5); // O
-    game.mark_board(3); // X
+    board->mark_board(1);  // X
+    board->mark_board(2);  // O
+    board->mark_board(4);  // X
+    board->mark_board(3);  // O
+    board->mark_board(7);  // X
 
-    REQUIRE(game.game_over());
-    auto winner = game.get_winner();
-    REQUIRE((winner == "X" || winner == "O" || winner == "C"));
+    REQUIRE(board->game_over() == true);
+    REQUIRE(board->get_winner() == "X");
 }
 
-TEST_CASE("TicTacToeManager tracks X, O, and tie totals")
+TEST_CASE("Test win by second column 3", "[TicTacToe3]")
 {
-    TicTacToeManager manager;
+    std::unique_ptr<TicTacToe> board = std::make_unique<TicTacToe3>();
+    board->start_game("O");
 
-    // Game 1: X wins
-    TicTacToe game1;
-    game1.start_game("X");
-    game1.mark_board(1); // X
-    game1.mark_board(4); // O
-    game1.mark_board(2); // X
-    game1.mark_board(5); // O
-    game1.mark_board(3); // X (X wins top row)
-    REQUIRE(game1.game_over());
-    REQUIRE(game1.get_winner() == "X");
-    manager.save_game(game1);
+    board->mark_board(2);
+    board->mark_board(1);
+    board->mark_board(5);
+    board->mark_board(3);
+    board->mark_board(8);
 
-    // Game 2: O wins
-    TicTacToe game2;
-    game2.start_game("O");
-    game2.mark_board(1); // O
-    game2.mark_board(4); // X
-    game2.mark_board(2); // O
-    game2.mark_board(5); // X
-    game2.mark_board(3); // O (O wins top row)
-    REQUIRE(game2.game_over());
-    REQUIRE(game2.get_winner() == "O");
-    manager.save_game(game2);
+    REQUIRE(board->game_over() == true);
+    REQUIRE(board->get_winner() == "O");
+}
 
-    // Game 3: tie (C)
-    TicTacToe game3;
-    game3.start_game("X");
-    // Fill board with no winner
-    game3.mark_board(1); // X
-    game3.mark_board(2); // O
-    game3.mark_board(3); // X
-    game3.mark_board(5); // O
-    game3.mark_board(4); // X
-    game3.mark_board(6); // O
-    game3.mark_board(8); // X
-    game3.mark_board(7); // O
-    game3.mark_board(9); // X
+TEST_CASE("Test win by third column 3", "[TicTacToe3]")
+{
+    std::unique_ptr<TicTacToe> board = std::make_unique<TicTacToe3>();
+    board->start_game("X");
 
-    REQUIRE(game3.game_over());
-    REQUIRE(game3.get_winner() == "C");
-    manager.save_game(game3);
+    board->mark_board(3);
+    board->mark_board(1);
+    board->mark_board(6);
+    board->mark_board(2);
+    board->mark_board(9);
 
-    int x = 0, o = 0, t = 0;
-    manager.get_winner_total(o, x, t);
+    REQUIRE(board->game_over() == true);
+    REQUIRE(board->get_winner() == "X");
+}
 
-    REQUIRE(x == 1);
-    REQUIRE(o == 1);
-    REQUIRE(t == 1);
+TEST_CASE("Test win by first row 3", "[TicTacToe3]")
+{
+    std::unique_ptr<TicTacToe> board = std::make_unique<TicTacToe3>();
+    board->start_game("X");
+
+    board->mark_board(1);
+    board->mark_board(4);
+    board->mark_board(2);
+    board->mark_board(5);
+    board->mark_board(3);
+
+    REQUIRE(board->game_over() == true);
+    REQUIRE(board->get_winner() == "X");
+}
+
+TEST_CASE("Test win by diagonal 3", "[TicTacToe3]")
+{
+    std::unique_ptr<TicTacToe> board = std::make_unique<TicTacToe3>();
+    board->start_game("O");
+
+    board->mark_board(1);
+    board->mark_board(2);
+    board->mark_board(5);
+    board->mark_board(3);
+    board->mark_board(9);
+
+    REQUIRE(board->game_over() == true);
+    REQUIRE(board->get_winner() == "O");
+}
+
+TEST_CASE("Test tie 3", "[TicTacToe3]")
+{
+    std::unique_ptr<TicTacToe> board = std::make_unique<TicTacToe3>();
+    board->start_game("X");
+
+    // full board, no winner
+    board->mark_board(1);
+    board->mark_board(2);
+    board->mark_board(3);
+    board->mark_board(5);
+    board->mark_board(4);
+    board->mark_board(6);
+    board->mark_board(8);
+    board->mark_board(7);
+    board->mark_board(9);
+
+    REQUIRE(board->game_over() == true);
+    REQUIRE(board->get_winner() == "C");
+}
+
+
+//   TICTACTOE 4 TESTS 
+
+
+TEST_CASE("Test win by first column 4", "[TicTacToe4]")
+{
+    auto board = std::make_unique<TicTacToe4>();
+    board->start_game("X");
+
+    board->mark_board(1);
+    board->mark_board(2);
+    board->mark_board(5);
+    board->mark_board(3);
+    board->mark_board(9);
+    board->mark_board(4);
+    board->mark_board(13);
+
+    REQUIRE(board->game_over() == true);
+    REQUIRE(board->get_winner() == "X");
+}
+
+TEST_CASE("Test win by first row 4", "[TicTacToe4]")
+{
+    auto board = std::make_unique<TicTacToe4>();
+    board->start_game("O");
+
+    board->mark_board(1);
+    board->mark_board(5);
+    board->mark_board(2);
+    board->mark_board(6);
+    board->mark_board(3);
+    board->mark_board(7);
+    board->mark_board(4);
+
+    REQUIRE(board->game_over() == true);
+    REQUIRE(board->get_winner() == "O");
+}
+
+TEST_CASE("Test win by diagonal main 4", "[TicTacToe4]")
+{
+    auto board = std::make_unique<TicTacToe4>();
+    board->start_game("X");
+
+    board->mark_board(1);
+    board->mark_board(2);
+    board->mark_board(6);
+    board->mark_board(3);
+    board->mark_board(11);
+    board->mark_board(4);
+    board->mark_board(16);
+
+    REQUIRE(board->game_over() == true);
+    REQUIRE(board->get_winner() == "X");
+}
+
+TEST_CASE("Test win by diagonal other 4", "[TicTacToe4]")
+{
+    auto board = std::make_unique<TicTacToe4>();
+    board->start_game("O");
+
+    board->mark_board(4);
+    board->mark_board(1);
+    board->mark_board(7);
+    board->mark_board(2);
+    board->mark_board(10);
+    board->mark_board(3);
+    board->mark_board(13);
+
+    REQUIRE(board->game_over() == true);
+    REQUIRE(board->get_winner() == "O");
+}
+
+TEST_CASE("Test tie 4", "[TicTacToe4]")
+{
+    auto board = std::make_unique<TicTacToe4>();
+    board->start_game("X");
+
+    // 16 moves arranged to produce a true tie (no 4-in-a-row)
+    std::vector<int> moves =
+    {1,2, 4,3, 6,5, 7,8, 9,10, 12,11, 14,13, 15,16};
+
+    for (int pos : moves)
+    {
+        board->mark_board(pos);
+    }
+
+    REQUIRE(board->game_over() == true);
+    REQUIRE(board->get_winner() == "C");
 }

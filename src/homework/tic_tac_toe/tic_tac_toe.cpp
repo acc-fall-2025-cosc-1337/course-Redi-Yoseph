@@ -1,62 +1,67 @@
 #include "tic_tac_toe.h"
+#include <cmath>
 
-TicTacToe::TicTacToe()
+TicTacToe::TicTacToe(int size)
+    : pegs(size * size, " ")
 {
-    clear_board();
 }
 
 void TicTacToe::start_game(std::string first_player)
 {
-    if (first_player == "X" || first_player == "O")
-    {
-        player = first_player;
-    }
-    else
-    {
-        player = "X"; // default safety
-    }
-
-    winner = "";
+    player = first_player;
     clear_board();
 }
 
 void TicTacToe::mark_board(int position)
 {
-    // Position is 1-9, internally index 0-8
-    if (position >= 1 && position <= 9 && pegs[position - 1] == " ")
+    // positions are 1-based
+    if (position >= 1 && static_cast<std::size_t>(position) <= pegs.size())
     {
         pegs[position - 1] = player;
-        // don't change player here; game_over logic uses current player for winner
         set_next_player();
     }
 }
 
+void TicTacToe::clear_board()
+{
+    for (auto& peg : pegs)
+    {
+        peg = " ";
+    }
+    winner = " ";
+}
+
 bool TicTacToe::game_over()
 {
-    if (check_row_win() || check_column_win() || check_diagonal_win())
+    if (check_column_win() || check_row_win() || check_diagonal_win())
     {
-        // The winner is the *previous* player (we flipped after mark_board)
-        // So flip once to get the last player who actually marked
-        set_next_player();
-        set_winner(player);
+        // determine winner from the board (don't rely on current player)
+        std::string win = find_winner();
+        if (win != " ")
+        {
+            set_winner(win);
+        }
         return true;
     }
-
-    if (check_board_full())
+    else if (check_board_full())
     {
-        set_winner("C");  // Cat / tie game
+        winner = "C"; // tie / cat game
         return true;
     }
 
     return false;
 }
 
-void TicTacToe::clear_board()
+bool TicTacToe::check_board_full()
 {
-    for (auto& p : pegs)
+    for (const auto& peg : pegs)
     {
-        p = " ";
+        if (peg == " ")
+        {
+            return false;
+        }
     }
+    return true;
 }
 
 void TicTacToe::set_next_player()
@@ -71,93 +76,131 @@ void TicTacToe::set_next_player()
     }
 }
 
-bool TicTacToe::check_row_win()
+void TicTacToe::set_winner(std::string winner_value)
 {
-    // rows: (0,1,2), (3,4,5), (6,7,8)
-    for (int row = 0; row < 9; row += 3)
-    {
-        if (pegs[row] != " " &&
-            pegs[row] == pegs[row + 1] &&
-            pegs[row] == pegs[row + 2])
-        {
-            return true;
-        }
-    }
+    winner = winner_value;
+}
+
+// base versions now do nothing (3x3 / 4x4 logic lives in derived classes)
+bool TicTacToe::check_column_win()
+{
     return false;
 }
 
-bool TicTacToe::check_column_win()
+bool TicTacToe::check_row_win()
 {
-    // columns: (0,3,6), (1,4,7), (2,5,8)
-    for (int col = 0; col < 3; ++col)
-    {
-        if (pegs[col] != " " &&
-            pegs[col] == pegs[col + 3] &&
-            pegs[col] == pegs[col + 6])
-        {
-            return true;
-        }
-    }
     return false;
 }
 
 bool TicTacToe::check_diagonal_win()
 {
-    // diagonals: (0,4,8) and (2,4,6)
-    if (pegs[0] != " " && pegs[0] == pegs[4] && pegs[0] == pegs[8])
-    {
-        return true;
-    }
-
-    if (pegs[2] != " " && pegs[2] == pegs[4] && pegs[2] == pegs[6])
-    {
-        return true;
-    }
-
     return false;
 }
 
-bool TicTacToe::check_board_full()
-{
-    for (const auto& p : pegs)
-    {
-        if (p == " ")
-        {
-            return false;
-        }
-    }
-    return true;
-}
-
-void TicTacToe::set_winner(const std::string& winr)
-{
-    winner = winr;
-}
-
-// ===================== STREAM OPERATORS =====================
-
 std::ostream& operator<<(std::ostream& out, const TicTacToe& game)
 {
-    // Display 3x3 board
-    for (int i = 0; i < 9; i += 3)
+    int size = static_cast<int>(std::sqrt(game.pegs.size()));
+
+    for (int row = 0; row < size; ++row)
     {
-        out << " " << game.pegs[i]     << " | "
-            << game.pegs[i + 1] << " | "
-            << game.pegs[i + 2] << "\n";
-        if (i < 6)
+        for (int col = 0; col < size; ++col)
         {
-            out << "---+---+---\n";
+            out << game.pegs[row * size + col];
+            if (col < size - 1)
+            {
+                out << " | ";
+            }
+        }
+        out << "\n";
+        if (row < size - 1)
+        {
+            out << std::string(size * 4 - 3, '-') << "\n";
         }
     }
-    out << "\n";
     return out;
 }
 
 std::istream& operator>>(std::istream& in, TicTacToe& game)
 {
     int position;
-    std::cout << "Player " << game.player << ", enter position (1-9): ";
+    std::cout << "Enter position: ";
     in >> position;
     game.mark_board(position);
     return in;
+}
+
+// Inspect the board to determine which player (if any) has a winning line.
+// Returns "X", "O", or " " when no winner is found.
+std::string TicTacToe::find_winner()
+{
+    int size = static_cast<int>(std::sqrt(pegs.size()));
+
+    // check rows
+    for (int r = 0; r < size; ++r)
+    {
+        int start = r * size;
+        const std::string& first = pegs[start];
+        if (first == " ") continue;
+        bool all_same = true;
+        for (int c = 1; c < size; ++c)
+        {
+            if (pegs[start + c] != first)
+            {
+                all_same = false;
+                break;
+            }
+        }
+        if (all_same) return first;
+    }
+
+    // check columns
+    for (int c = 0; c < size; ++c)
+    {
+        const std::string& first = pegs[c];
+        if (first == " ") continue;
+        bool all_same = true;
+        for (int r = 1; r < size; ++r)
+        {
+            if (pegs[r * size + c] != first)
+            {
+                all_same = false;
+                break;
+            }
+        }
+        if (all_same) return first;
+    }
+
+    // main diagonal
+    const std::string& diag_first = pegs[0];
+    if (diag_first != " ")
+    {
+        bool all_same = true;
+        for (int i = 1; i < size; ++i)
+        {
+            if (pegs[i * size + i] != diag_first)
+            {
+                all_same = false;
+                break;
+            }
+        }
+        if (all_same) return diag_first;
+    }
+
+    // other diagonal
+    const std::string& other_first = pegs[size - 1];
+    if (other_first != " ")
+    {
+        bool all_same = true;
+        for (int i = 1; i < size; ++i)
+        {
+            if (pegs[i * size + (size - 1 - i)] != other_first)
+            {
+                all_same = false;
+                break;
+            }
+        }
+        if (all_same) return other_first;
+    }
+
+    return " ";
 }
