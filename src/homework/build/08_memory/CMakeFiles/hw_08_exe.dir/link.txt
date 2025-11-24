@@ -1,0 +1,1 @@
+/usr/bin/c++ -rdynamic CMakeFiles/hw_08_exe.dir/main.o CMakeFiles/hw_08_exe.dir/memory.o -o hw_08_exe 

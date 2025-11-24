@@ -1,0 +1,2 @@
+/usr/bin/ar qc libhw_07_library.a CMakeFiles/hw_07_library.dir/arrays.o
+/usr/bin/ranlib libhw_07_library.a

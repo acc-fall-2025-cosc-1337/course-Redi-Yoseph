@@ -1,0 +1,1 @@
+/usr/bin/c++ -rdynamic CMakeFiles/hw_10_exe.dir/main.o CMakeFiles/hw_10_exe.dir/algorithm.o -o hw_10_exe 

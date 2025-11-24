@@ -1,0 +1,2 @@
+/usr/bin/ar qc libhw_05_library.a CMakeFiles/hw_05_library.dir/func.o
+/usr/bin/ranlib libhw_05_library.a

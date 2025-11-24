@@ -1,0 +1,2 @@
+/usr/bin/ar qc libhw_10_library.a CMakeFiles/hw_10_library.dir/algorithm.o
+/usr/bin/ranlib libhw_10_library.a

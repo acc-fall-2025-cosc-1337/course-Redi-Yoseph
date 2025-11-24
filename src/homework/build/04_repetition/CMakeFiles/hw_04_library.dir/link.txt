@@ -1,0 +1,2 @@
+/usr/bin/ar qc libhw_04_library.a CMakeFiles/hw_04_library.dir/repetition.o
+/usr/bin/ranlib libhw_04_library.a

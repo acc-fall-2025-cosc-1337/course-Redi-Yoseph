@@ -1,0 +1,1 @@
+/usr/bin/c++ -rdynamic CMakeFiles/hw_01_exe.dir/main.o CMakeFiles/hw_01_exe.dir/data_types.o -o hw_01_exe 

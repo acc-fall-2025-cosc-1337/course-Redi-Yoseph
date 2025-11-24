@@ -1,0 +1,2 @@
+/usr/bin/ar qc libhw_01_library.a CMakeFiles/hw_01_library.dir/data_types.o
+/usr/bin/ranlib libhw_01_library.a

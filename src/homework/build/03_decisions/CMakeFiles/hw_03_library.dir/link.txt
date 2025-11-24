@@ -1,0 +1,2 @@
+/usr/bin/ar qc libhw_03_library.a CMakeFiles/hw_03_library.dir/decisions.o
+/usr/bin/ranlib libhw_03_library.a
